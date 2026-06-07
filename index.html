@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Total Reach — all your views, one number</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080a0f; --bg2:#0d1119; --ink:#f4f7ff; --dim:#8a93a8; --faint:#4a5163;
+    --glow:#5ec8ff; --hair:rgba(180,200,240,.10);
+    --display:'Syne',system-ui,sans-serif; --mono:'Spline Sans Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);
+    min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  .bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+  .bg::before,.bg::after{content:"";position:absolute;width:70vmax;height:70vmax;
+    border-radius:50%;filter:blur(90px);opacity:.45;mix-blend-mode:screen}
+  .bg::before{background:radial-gradient(circle,#14406b 0,transparent 60%);
+    top:-25vmax;left:-12vmax;animation:d1 40s ease-in-out infinite}
+  .bg::after{background:radial-gradient(circle,#3a1f5e 0,transparent 60%);
+    bottom:-25vmax;right:-15vmax;animation:d2 48s ease-in-out infinite}
+  @keyframes d1{50%{transform:translate(12vmax,9vmax) scale(1.12)}}
+  @keyframes d2{50%{transform:translate(-10vmax,-7vmax) scale(1.1)}}
+
+  .wrap{position:relative;z-index:2;max-width:880px;margin:0 auto;
+    padding:clamp(28px,6vmin,80px) 22px}
+
+  nav{display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:clamp(40px,10vmin,100px)}
+  .brand{font-family:var(--display);font-weight:800;letter-spacing:.12em;
+    text-transform:uppercase;font-size:15px}
+  .brand .d{color:var(--glow)}
+  nav .links{display:flex;gap:20px;font-size:13px}
+  nav a{color:var(--dim);text-decoration:none}
+  nav a:hover{color:var(--ink)}
+
+  .hero{text-align:center;margin-bottom:clamp(48px,9vmin,90px)}
+  .eye{width:84px;height:84px;margin:0 auto 30px;display:block;
+    filter:drop-shadow(0 0 24px rgba(94,200,255,.45))}
+  h1{font-family:var(--display);font-weight:800;line-height:1.04;
+    font-size:clamp(34px,7vmin,68px);letter-spacing:-.01em;margin-bottom:20px}
+  h1 em{font-style:normal;color:var(--glow)}
+  .lede{color:var(--dim);font-size:clamp(15px,2vmin,19px);line-height:1.6;
+    max-width:560px;margin:0 auto}
+
+  .platforms{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+    margin-top:36px}
+  .chip{border:1px solid var(--hair);border-radius:999px;
+    padding:8px 16px;font-size:13px;color:var(--dim);
+    display:flex;align-items:center;gap:8px}
+  .chip i{width:8px;height:8px;border-radius:50%}
+
+  .card{border:1px solid var(--hair);border-radius:18px;
+    background:linear-gradient(165deg,var(--bg2),rgba(13,17,25,.4));
+    padding:clamp(24px,4vmin,40px);margin-top:clamp(40px,8vmin,72px)}
+  .card h2{font-family:var(--display);font-weight:700;font-size:20px;margin-bottom:14px}
+  .card p{color:var(--dim);line-height:1.7;font-size:15px}
+  .card p + p{margin-top:12px}
+
+  footer{margin-top:clamp(48px,9vmin,90px);padding-top:24px;
+    border-top:1px solid var(--hair);
+    display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;
+    justify-content:space-between;color:var(--faint);font-size:13px}
+  footer a{color:var(--dim);text-decoration:none}
+  footer a:hover{color:var(--ink)}
+</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="wrap">
+    <nav>
+      <div class="brand">Total Reach<span class="d">.</span></div>
+      <div class="links">
+        <a href="legal.html#privacy">Privacy</a>
+        <a href="legal.html#terms">Terms</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <svg class="eye" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="50" rx="42" ry="26" stroke="#d8ecff" stroke-width="4"/>
+        <circle cx="50" cy="50" r="16" fill="#3fb6ff"/>
+        <circle cx="50" cy="50" r="7.5" fill="#07101c"/>
+        <circle cx="45" cy="45" r="2.6" fill="#fff"/>
+      </svg>
+      <h1>All your views.<br><em>One number.</em> One screen.</h1>
+      <p class="lede">Total Reach is a personal dashboard that gathers the view
+      counts from your own social media accounts and shows the running total on
+      a single display.</p>
+
+      <div class="platforms">
+        <span class="chip"><i style="background:#ff0033"></i>YouTube</span>
+        <span class="chip"><i style="background:#e1306c"></i>Instagram</span>
+        <span class="chip"><i style="background:#0866ff"></i>Facebook</span>
+        <span class="chip"><i style="background:#25f4ee"></i>TikTok</span>
+        <span class="chip"><i style="background:#e60023"></i>Pinterest</span>
+      </div>
+    </section>
+
+    <div class="card">
+      <h2>How it works</h2>
+      <p>You connect each of your own accounts through their official APIs. Total
+      Reach reads only your own statistics — the view counts on the content you
+      posted — and adds them into a single figure.</p>
+      <p>It does not access anyone else's data, never posts or changes anything,
+      and stores its data locally on your own device. It's a private counter for
+      your own numbers, not a tool that touches other people's accounts.</p>
+    </div>
+
+    <footer>
+      <span>© 2026 Total Reach — a personal project.</span>
+      <span><a href="legal.html#privacy">Privacy Policy</a> · <a href="legal.html#terms">Terms of Service</a></span>
+    </footer>
+  </div>
+</body>
+</html>
