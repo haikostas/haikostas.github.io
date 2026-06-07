@@ -1,44 +1,94 @@
-# haikostas.github.io
+# Total Reach — social views counter
 
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Terms of Service — Total Reach</title>
-<style>
-  body{max-width:760px;margin:40px auto;padding:0 20px;font:16px/1.6 system-ui,sans-serif;color:#1a1a1a}
-  h1{font-size:28px} h2{font-size:19px;margin-top:32px} small{color:#666}
-</style>
-</head>
-<body>
-  <h1>Terms of Service</h1>
-  <small>Last updated: 2026</small>
+Counts your total views across YouTube, Instagram, Facebook, TikTok and
+Pinterest, and shows the running total on a full-screen display.
 
-  <p>Total Reach ("the app") is a personal, non-commercial dashboard that
-  displays the owner's own social media view-count statistics on a private
-  screen. By using the app you agree to these terms.</p>
+A small Python **collector** owns every platform integration (auth, token
+refresh, polling, caching) and writes one `data.json`. A separate **display**
+page just reads that file and animates the numbers. The two never touch each
+other's concerns — so when TikTok inevitably needs a token refresh, the other
+four keep showing without a hiccup.
 
-  <h2>Use of the app</h2>
-  <p>The app is intended solely for personal use by its owner to view aggregated
-  statistics from social media accounts that the owner controls and explicitly
-  authorizes. The app is provided "as is," without warranties of any kind.</p>
+## What works today
 
-  <h2>Third-party platforms</h2>
-  <p>The app accesses data through official platform APIs, including TikTok,
-  subject to and in compliance with each platform's developer terms and policies.
-  The app does not scrape data, automate platform actions, or access any account
-  other than the one that authorizes it.</p>
+| Platform   | Status                                                        |
+|------------|---------------------------------------------------------------|
+| YouTube    | ✅ Working — free Data API, just needs an API key + channel ID |
+| Instagram  | ⏳ Ready to activate — pending Meta App Review                  |
+| Facebook   | ⏳ Ready to activate — shares the Meta app with Instagram       |
+| TikTok     | 🔑 Code ready — run tiktok_login.py once approved (see below)   |
+| Pinterest  | ⏳ Ready to activate — pending Pinterest Standard access        |
 
-  <h2>Data</h2>
-  <p>Handling of data accessed through connected platforms is described in the
-  app's Privacy Policy.</p>
+The four "pending" platforms show as such on the display without breaking
+anything. Each file in `platforms/` has full setup notes for when its access
+is approved.
 
-  <h2>Limitation of liability</h2>
-  <p>The app owner is not liable for any inaccuracy in displayed statistics or
-  for any interruption caused by changes to third-party platform APIs.</p>
+## Quick start (laptop, no Raspberry Pi needed)
 
-  <h2>Changes</h2>
-  <p>These terms may be updated from time to time. Continued use of the app
-  constitutes acceptance of the current terms.</p>
-</body>
-</html>
+```bash
+pip install -r requirements.txt
+
+# 1) See the display look its best with fake data:
+python collector.py --demo
+#    -> open http://localhost:8000
+
+# 2) Go real:
+cp config.example.json config.json
+#    edit config.json — add your YouTube api_key + channel_id (see platforms/youtube.py)
+python collector.py
+#    -> open http://localhost:8000
+```
+
+`--demo` invents numbers so you can admire the UI before any API is set up.
+`--once` polls a single time and exits (handy for testing a new credential).
+`--port 8800` changes the web port.
+
+## Two things to start NOW (they're the real bottleneck)
+
+The code is the fast part; **approvals are the slow part**. Kick these off today
+so they're ready by the time the code is:
+
+1. Register a **TikTok** developer app (slowest approval).
+2. Request Pinterest **Standard access** (Trial tokens expire every 24h and
+   won't work for an always-on display).
+
+Meta (Facebook + Instagram) is one app with App Review for the insights
+permissions — start that whenever you're ready.
+
+## TikTok login (one-time)
+
+Once your TikTok app's credentials exist (even before full App Review, using a
+sandbox / target user), authorize your account once:
+
+1. In config.json, fill `tiktok.client_key`, `tiktok.client_secret`, and
+   `tiktok.redirect_uri` (must EXACTLY match a redirect URI registered in the
+   TikTok portal, e.g. `http://127.0.0.1:8421/callback`).
+2. Run `python tiktok_login.py` — your browser opens TikTok's auth screen,
+   you approve, and the token is saved to `tiktok_token.json`.
+3. Set `tiktok.enabled = true` and run the collector. It refreshes the token
+   automatically from then on.
+
+**Demo video for App Review:** screen-record step 2 from start to finish —
+running the script, the browser opening, the TikTok authorization screen, you
+approving, the "authorized" page, and the token being saved (and ideally the
+collector then showing your TikTok number). That recording is the end-to-end
+flow TikTok asks you to upload.
+
+## Adding a platform once it's approved
+
+1. Fill its credentials into `config.json` and set `"enabled": true`.
+2. Implement `fetch()` in the matching `platforms/*.py` (the setup notes and a
+   call sketch are already in each file).
+3. Restart the collector. The display picks it up automatically.
+
+## Moving to the Raspberry Pi later
+
+It's a straight copy — same code, same commands. The extra Pi-only steps will
+be: run the collector on boot (a systemd service), and launch Chromium in
+kiosk mode pointed at `http://localhost:8000` so it fills the screen. Ask when
+you get there and we'll set that up.
+
+## Tuning
+
+`poll_interval_seconds` in config.json (default 1800 = 30 min). View counts
+move slowly, so polling often buys nothing and just burns rate limits.
